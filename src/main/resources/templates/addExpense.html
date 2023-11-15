@@ -20,7 +20,7 @@
       <h1>Add Expense</h1>
     </div>
     <div id="addExpense">
-    <form th:object="${newExpense}" th:action="@{save}" action="#" method="post">
+    <form th:object="${newExpense}" th:action="@{saveExpense}" action="#" method="post">
     <label for="name">Name</label>
     <input type="text" id="name" th:field="*{name}" />
 

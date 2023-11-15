@@ -15,6 +15,11 @@
   </head>
   <body>
     <h1>Hello <span sec:authentication="name"></span>!</h1>
+    <div class="col-md-4" style="padding: 20px 0">
+      <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign out" class="btn btn-danger" />
+      </form>
+    </div>
 
     <div class="col-md-4" style="padding: 20px 0"></div>
     <table class="table table-striped">
@@ -30,17 +35,64 @@
         <td th:text="${expense.date}"></td>
         <td th:text="${expense.category.name}"></td>
         <td>
-          <a class="btn btn-warning" th:href="@{/edit/{id}(id=${expense.id})}"
+          <a
+            sec:authorize="hasRole('ADMIN')"
+            class="btn btn-warning"
+            th:href="@{/edit/{id}(id=${expense.id})}"
             >Edit</a
           >
         </td>
         <td>
-          <a class="btn btn-danger" th:href="@{/delete/{id}(id=${expense.id})}"
+          <a
+            sec:authorize="hasRole('ADMIN')"
+            class="btn btn-danger"
+            th:href="@{/delete/{id}(id=${expense.id})}"
             >Delete</a
           >
         </td>
       </tr>
     </table>
-    <a href="/addExpense" class="btn btn-success">Add Expense</a>
+    <a
+      sec:authorize="hasRole('ADMIN')"
+      href="/addExpense"
+      class="btn btn-success"
+      >Add Expense</a
+    >
+    <div id="totalAmounts">
+      <h2>Total expenses</h2>
+      <h4>Category Total</h4>
+    </div>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      var categorySums = {};
+
+      /* Iterate over expenses and accumulate amounts for each category */
+      /*[# th:each="expense : ${expenses}"]*/
+      /*[# th:if="${expense ne null and expense.category ne null}"]*/
+      var categoryName = /*[[${expense.category.name}]]*/ "";
+      var amount = /*[[${expense.amount}]]*/ "";
+
+      if (categoryName !== null && amount !== null) {
+        if (categorySums[categoryName] === undefined) {
+          categorySums[categoryName] = 0;
+        }
+
+        categorySums[categoryName] += amount;
+      }
+      /*[/]*/
+      /*[/]*/
+
+      /* Output category sums */
+      var totalAmountsDiv = document.getElementById("totalAmounts");
+      for (var categoryName in categorySums) {
+        if (categorySums.hasOwnProperty(categoryName)) {
+          var totalAmountDiv = document.createElement("div");
+          totalAmountDiv.textContent =
+            categoryName + " : " + categorySums[categoryName] + "€";
+          totalAmountsDiv.appendChild(totalAmountDiv);
+        }
+      }
+      /*]]>*/
+    </script>
   </body>
 </html>
