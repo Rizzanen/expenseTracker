@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Expense tracker</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link
+    type="text/css"
+    rel="stylesheet"
+    href="/css/bootstrap.min.css"
+    th:href="@{/css/bootstrap.min.css}"
+  />
+  </head>
+  <body>
+    <h1>Add Expense</h1>
+    <div>
+    <form th:object="${newExpense}" th:action="@{save}" action="#" method="post">
+    <label for="name">Name</label>
+    <input type="text" id="name" th:field="*{name}" />
+
+    <label for="amount">Amount</label>
+    <input type="text" id="amount" th:field="*{amount}" />
+
+    <label for="date">date</label>
+    <input type="text" id="date" th:field="*{date}" />
+
+    <label for="catlist">Category</label>
+    <select id="catlist" th:field="*{category}" >     <option th:each="category: ${categorys}" th:value="${category.id}"
+    th:text="${category.name}"></option>
+    </select>
+    
+    <input type="submit" value="Save"></input>
+    </form>
+    <div>
+      <a href="/addCategory" class="btn btn-success">Add Category</a>
+    </div>
+    </div>
+  </body>
+</html>

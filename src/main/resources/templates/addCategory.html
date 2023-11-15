@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Expense tracker</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <h1>Add new category</h1>
+    <div>
+    <form th:object="${newCategory}" th:action="@{saveCategory}" action="#" method="post">
+    <label for="name">New category</label>
+    <input type="text" id="category" th:field="*{name}" />
+    
+    <input type="submit" value="Save"></input>
+    </form>
+    </div>
+  </body>
+</html>
