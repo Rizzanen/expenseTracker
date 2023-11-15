@@ -29,6 +29,16 @@
         <td th:text="${expense.amount}"></td>
         <td th:text="${expense.date}"></td>
         <td th:text="${expense.category.name}"></td>
+        <td>
+          <a class="btn btn-warning" th:href="@{/edit/{id}(id=${expense.id})}"
+            >Edit</a
+          >
+        </td>
+        <td>
+          <a class="btn btn-danger" th:href="@{/delete/{id}(id=${expense.id})}"
+            >Delete</a
+          >
+        </td>
       </tr>
     </table>
     <a href="/addExpense" class="btn btn-success">Add Expense</a>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Expense tracker</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <h1>Edit Expense</h1>
+    <div>
+    <form th:object="${editedExpense}" th:action="@{/saveEdit}" action="#" method="post">
+    <label for="name">Name</label>
+    <input type="text" id="name" th:field="*{name}" />
+
+    <label for="amount">Amount</label>
+    <input type="text" id="amount" th:field="*{amount}" />
+
+    <label for="date">Date (dd.mm.yyyy)</label>
+    <input type="text" th:field="*{date}" />
+    
+    <label for="catlist">Category</label>
+<select id="catlist" th:field="*{category}" class="form-control"> <option th:each="category: ${categorys}" th:value="${category.id}"
+ th:text="${category.name}"></option>
+</select>
+    
+    <input type="submit" value="Save"></input>
+    </form>
+    </div>
+    
+  </body>
+</html>
