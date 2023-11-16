@@ -4,18 +4,18 @@
     <title>Expense tracker</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   </head>
-  <body>
+  <body style="background-color: rgb(238, 238, 238)">
     <h1>Edit Expense</h1>
     <div>
     <form th:object="${expense}" th:action="@{/saveEdit}" action="#" method="post">
     <label for="name">Name</label>
-    <input type="text" id="name" th:field="*{name}" />
+    <input type="text" id="name" th:field="*{name}" /><br>
 
     <label for="amount">Amount</label>
-    <input type="text" id="amount" th:field="*{amount}" />
+    <input type="text" id="amount" th:field="*{amount}" /><br>
 
     <label for="date">Date (dd.mm.yyyy)</label>
-    <input type="text" th:field="*{date}" />
+    <input type="text" th:field="*{date}" /><br>
     
     <label for="catlist">Category</label>
 <select id="catlist" th:field="*{category}" class="form-control"> <option th:each="category: ${categorys}" th:value="${category.id}"

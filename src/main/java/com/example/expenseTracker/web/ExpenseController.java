@@ -3,8 +3,11 @@ package com.example.expenseTracker.web;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,8 @@ import org.springframework.ui.Model;
 import com.example.expenseTracker.domain.CategoryRepository;
 import com.example.expenseTracker.domain.Expense;
 import com.example.expenseTracker.domain.ExpenseRepository;
+import com.example.expenseTracker.exception.NotFoundException;
+
 import jakarta.validation.Valid;
 import com.example.expenseTracker.domain.Category;
 
@@ -25,6 +30,12 @@ public class ExpenseController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    //When NotFoundException  occurs, spring will call this method to handle the exception. It creates HttpStatus 404 error and puts the set message into the body of the Response. 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exeption) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exeption.getMessage());
+    }
 
     //Endpoint for /expenseList. Give all expenses found it the expenseRepository as parameter for thymeleaf template.
     @RequestMapping(value = "/expenseList", method = RequestMethod.GET)
@@ -93,24 +104,40 @@ public class ExpenseController {
 		return "login";
 	}
 
-    //REST endpoint for calling expense by id as json.
+    //REST endpoint for calling expense by id as json. Also includes calling of NotFoundException if findById is empty after searching with given id.
     @RequestMapping(value="/expense/{id}", method = RequestMethod.GET)
-    public @ResponseBody Optional<Expense> findExpenseRest(@PathVariable("id")Long expenseId){
-        return expenseRepository.findById(expenseId);
+    public ResponseEntity <Expense> findExpenseRest(@PathVariable("id")Long expenseId){
+        Expense expense = expenseRepository.findById(expenseId)
+        .orElseThrow(()->new NotFoundException("Expense not found with ID: " + expenseId));
+        return ResponseEntity.ok().body(expense);
     }
-    //REST endpoint for calling all expenses by id as json.
+
+    //REST endpoint for calling all expenses by id as json. Also call exception handling and set exception message if no expenses is found from db
     @RequestMapping(value="/expenses", method = RequestMethod.GET)
     public @ResponseBody List <Expense> allExpensesRest(){
-        return(List<Expense>) expenseRepository.findAll();
+        List <Expense> expenses = (List<Expense>) expenseRepository.findAll();
+        if(expenses.isEmpty()) {
+            throw new NotFoundException("No expenses found from database");
+        }
+        return expenses;
     }
-    //REST endpoint for calling all categorys by id as json.
+
+    //REST endpoint for calling all expenses by id as json. Also call exception handling and set exception message if no categorys is found from db
     @RequestMapping(value="/categorys", method = RequestMethod.GET)
     public @ResponseBody List <Category> allCategorysRest(){
-        return(List<Category>) categoryRepository.findAll();
+        List <Category> categorys = (List<Category>) categoryRepository.findAll();
+        if(categorys.isEmpty()) {
+            throw new NotFoundException("No categorys found from database");
+        }
+        return categorys;
     }
-     //REST endpoint for calling category by id as json.
+
+     //REST endpoint for calling category by id as json. Also includes calling of NotFoundException if findById is empty after searching with given id.
     @RequestMapping(value="/category/{id}", method = RequestMethod.GET)
-    public @ResponseBody Optional<Category> findCategoryRest(@PathVariable("id")Long categoryId){
-        return categoryRepository.findById(categoryId);
+    public  ResponseEntity<Category> findCategoryRest(@PathVariable("id")Long categoryId){
+        Category category = categoryRepository.findById(categoryId)
+        .orElseThrow(()->new NotFoundException("Category not found with ID: " + categoryId));
+        return ResponseEntity.ok().body(category);
     }
+    
 }

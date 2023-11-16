@@ -15,31 +15,34 @@
     th:href="@{/css/styles.css}"
   />
   </head>
-  <body>
+  <body style="background-color: rgb(238, 238, 238)">
     <div id="addExpenseHeader">
       <h1>Add Expense</h1>
     </div>
     <div id="addExpense">
     <form th:object="${newExpense}" th:action="@{saveExpense}" action="#" method="post">
-    <label for="name">Name</label>
-    <input type="text" id="name" th:field="*{name}" />
+    <label for="name">Name</label><br>
+    <input type="text" id="name" th:field="*{name}" /><br>
 
-    <label for="amount">Amount</label>
-    <input type="text" id="amount" th:field="*{amount}" />
+    <label for="amount">Amount</label><br>
+    <input type="text" id="amount" th:field="*{amount}" /><br>
 
-    <label for="date">Date (dd.mm.yyyy)</label>
-    <input type="text" id="date" th:field="*{date}" />
+    <label for="date">Date (dd.mm.yyyy)</label><br>
+    <input type="text" id="date" th:field="*{date}" /><br>
 
-    <label for="catlist">Category</label>
+    <label for="catlist">Category</label><br>
     <select id="catlist" th:field="*{category}" >     <option th:each="category: ${categorys}" th:value="${category.id}"
     th:text="${category.name}"></option>
-    </select>
-    
+    </select><br>
+    <br>
     <input type="submit" value="Save" id="addSaveButton" class="btn btn-success"></input>
     </form>
   </div>
     <div id="addCategoryContainer">
       <h2>Need to add new category?</h2>
+      
+    </div>
+    <div id="addCategoryButton">
       <a href="/addCategory" class="btn btn-warning">Add Category</a>
     </div>
     

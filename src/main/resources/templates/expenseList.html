@@ -13,21 +13,34 @@
       th:href="@{/css/bootstrap.min.css}"
     />
   </head>
-  <body>
-    <h1>Hello <span sec:authentication="name"></span>!</h1>
-    <div class="col-md-4" style="padding: 20px 0">
-      <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Sign out" class="btn btn-danger" />
-      </form>
-    </div>
 
+  <body style="background-color: rgb(238, 238, 238)">
+    <div
+      id="headerContainer"
+      class="d-flex justify-content-between align-items-right"
+    >
+      <h1 class="mr-auto">Hello <span sec:authentication="name"></span>!</h1>
+      <div class="col-md-4" style="padding: 20px 0">
+        <form th:action="@{/logout}" method="post">
+          <input type="submit" value="Sign out" class="btn btn-danger" />
+        </form>
+      </div>
+    </div>
+    <a
+      sec:authorize="hasRole('ADMIN')"
+      href="/addExpense"
+      class="btn btn-success"
+      >Add Expense</a
+    >
     <div class="col-md-4" style="padding: 20px 0"></div>
-    <table class="table table-striped">
+    <table class="table" id="listTable">
       <tr>
         <th>Name</th>
         <th>Amount €</th>
         <th>Date (dd.mm.yyyy)</th>
         <th>Category</th>
+        <th></th>
+        <th></th>
       </tr>
       <tr th:each="expense : ${expenses}">
         <td th:text="${expense.name}"></td>
@@ -52,44 +65,86 @@
         </td>
       </tr>
     </table>
-    <a
-      sec:authorize="hasRole('ADMIN')"
-      href="/addExpense"
-      class="btn btn-success"
-      >Add Expense</a
-    >
-    <div id="totalAmounts">
-      <h2>Total expenses</h2>
-      <h4>Category Total</h4>
-    </div>
+
+    <div id="totalAmounts"></div>
     <script th:inline="javascript">
       /*<![CDATA[*/
       var categorySums = {};
-
-      /* Iterate over expenses and accumulate amounts for each category */
       /*[# th:each="expense : ${expenses}"]*/
       /*[# th:if="${expense ne null and expense.category ne null}"]*/
       var categoryName = /*[[${expense.category.name}]]*/ "";
       var amount = /*[[${expense.amount}]]*/ "";
+      var date = /*[[${expense.date}]]*/ "";
+      var month = date.slice(3, 5);
 
+      if (month === "01") {
+        month = "January";
+      } else if (month === "02") {
+        month = "February";
+      } else if (month === "03") {
+        month = "March";
+      } else if (month === "04") {
+        month = "April";
+      } else if (month === "05") {
+        month = "May";
+      } else if (month === "06") {
+        month = "June";
+      } else if (month === "07") {
+        month = "July";
+      } else if (month === "08") {
+        month = "August";
+      } else if (month === "09") {
+        month = "September";
+      } else if (month === "10") {
+        month = "October";
+      } else if (month === "11") {
+        month = "November";
+      } else {
+        month = "December";
+      }
       if (categoryName !== null && amount !== null) {
-        if (categorySums[categoryName] === undefined) {
-          categorySums[categoryName] = 0;
+        if (categorySums[month] === undefined) {
+          categorySums[month] = {};
+          categorySums[month].total = 0;
         }
 
-        categorySums[categoryName] += amount;
+        if (categorySums[month][categoryName] === undefined) {
+          categorySums[month][categoryName] = 0;
+        }
+
+        categorySums[month][categoryName] += parseFloat(amount);
+        categorySums[month].total += parseFloat(amount);
       }
       /*[/]*/
       /*[/]*/
 
-      /* Output category sums */
       var totalAmountsDiv = document.getElementById("totalAmounts");
-      for (var categoryName in categorySums) {
-        if (categorySums.hasOwnProperty(categoryName)) {
-          var totalAmountDiv = document.createElement("div");
-          totalAmountDiv.textContent =
-            categoryName + " : " + categorySums[categoryName] + "€";
-          totalAmountsDiv.appendChild(totalAmountDiv);
+      for (var month in categorySums) {
+        if (categorySums.hasOwnProperty(month)) {
+          var monthDiv = document.createElement("div");
+          monthDiv.innerHTML =
+            "<h2>" +
+            month +
+            "'s total: " +
+            categorySums[month].total.toFixed(2) +
+            "€ </h2>";
+          totalAmountsDiv.appendChild(monthDiv);
+
+          for (var categoryName in categorySums[month]) {
+            if (
+              categorySums[month].hasOwnProperty(categoryName) &&
+              categoryName !== "total"
+            ) {
+              var totalAmountDiv = document.createElement("div");
+              totalAmountDiv.innerHTML =
+                "<h5>" +
+                categoryName +
+                " expenses: " +
+                categorySums[month][categoryName].toFixed(2) +
+                "€ </h5>";
+              totalAmountsDiv.appendChild(totalAmountDiv);
+            }
+          }
         }
       }
       /*]]>*/
