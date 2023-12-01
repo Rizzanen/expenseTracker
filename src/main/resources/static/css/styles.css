@@ -1,3 +1,28 @@
+#headerContainer {
+  margin-left: 325px;
+  margin-right: 100px;
+  margin-top: 50px !important;
+}
+#addExpenseButton {
+  margin-left: 325px;
+  margin-top: 40px;
+}
+#expenseList {
+  width: 100% !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#totalAmounts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  padding-bottom: 100px;
+}
+
 #addExpense {
   width: 90%;
   display: flex;
@@ -16,6 +41,7 @@
 #addCategoryContainer {
   width: 600px;
   margin-top: 30px;
+  margin-left: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,8 +55,7 @@
 #addCategoryButton {
   width: 90%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-left: 550px;
 }
 #addCategoryContainer {
   width: 90%;

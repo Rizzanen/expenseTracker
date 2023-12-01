@@ -35,8 +35,8 @@ public class ExpenseTrackerApplication {
 			
             expenceRepository.save(new Expense("Gas", new BigDecimal("80.90") , "20.10.2023", categoryRepository.findByName("Car").get(0)));
 			expenceRepository.save(new Expense("ES", new BigDecimal("1.45") , "21.10.2023", categoryRepository.findByName("Energy drinks").get(0)));
-			expenceRepository.save(new Expense("HSL kklippu", new BigDecimal("45.90") , "30.10.2023", categoryRepository.findByName("Public transportation").get(0)));
-			expenceRepository.save(new Expense("Sipuli", new BigDecimal("0.80") , "21.10.2023", categoryRepository.findByName("Groceries").get(0)));
+			expenceRepository.save(new Expense("HSL monthly ticket", new BigDecimal("45.90") , "30.10.2023", categoryRepository.findByName("Public transportation").get(0)));
+			expenceRepository.save(new Expense("Onion", new BigDecimal("0.80") , "21.10.2023", categoryRepository.findByName("Groceries").get(0)));
 			expenceRepository.save(new Expense("Shirt", new BigDecimal("79.95") , "21.11.2023", categoryRepository.findByName("Clothing").get(0)));
 			expenceRepository.save(new Expense("Burana", new BigDecimal("5.0") , "21.11.2023", categoryRepository.findByName("Pharmacy").get(0)));
 

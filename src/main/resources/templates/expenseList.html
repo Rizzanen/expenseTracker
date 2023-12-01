@@ -12,142 +12,156 @@
       href="/css/bootstrap.min.css"
       th:href="@{/css/bootstrap.min.css}"
     />
+    <link
+      rel="stylesheet"
+      href="/css/styles.css"
+      th:href="@{/css/styles.css}"
+    />
   </head>
 
-  <body style="background-color: rgb(238, 238, 238)">
-    <div
-      id="headerContainer"
-      class="d-flex justify-content-between align-items-right"
-    >
-      <h1 class="mr-auto">Hello <span sec:authentication="name"></span>!</h1>
-      <div class="col-md-4" style="padding: 20px 0">
-        <form th:action="@{/logout}" method="post">
-          <input type="submit" value="Sign out" class="btn btn-danger" />
-        </form>
+  <body>
+    <div>
+      <div
+        id="headerContainer"
+        class="d-flex justify-content-between align-items-right"
+      >
+        <h1 class="mr-auto">
+          Welcome <span sec:authentication="name"></span>!
+        </h1>
+        <div class="col-md-4" style="padding: 20px 0">
+          <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign out" class="btn btn-danger" />
+          </form>
+        </div>
       </div>
-    </div>
-    <a
-      sec:authorize="hasRole('ADMIN')"
-      href="/addExpense"
-      class="btn btn-success"
-      >Add Expense</a
-    >
-    <div class="col-md-4" style="padding: 20px 0"></div>
-    <table class="table" id="listTable">
-      <tr>
-        <th>Name</th>
-        <th>Amount €</th>
-        <th>Date (dd.mm.yyyy)</th>
-        <th>Category</th>
-        <th></th>
-        <th></th>
-      </tr>
-      <tr th:each="expense : ${expenses}">
-        <td th:text="${expense.name}"></td>
-        <td th:text="${expense.amount}"></td>
-        <td th:text="${expense.date}"></td>
-        <td th:text="${expense.category.name}"></td>
-        <td>
-          <a
-            sec:authorize="hasRole('ADMIN')"
-            class="btn btn-warning"
-            th:href="@{/edit/{id}(id=${expense.id})}"
-            >Edit</a
-          >
-        </td>
-        <td>
-          <a
-            sec:authorize="hasRole('ADMIN')"
-            class="btn btn-danger"
-            th:href="@{/delete/{id}(id=${expense.id})}"
-            >Delete</a
-          >
-        </td>
-      </tr>
-    </table>
+      <a
+        id="addExpenseButton"
+        sec:authorize="hasRole('ADMIN')"
+        href="/addExpense"
+        class="btn btn-success"
+        >Add Expense</a
+      >
+      <div style="padding: 20px 0" id="expenseList">
+        <table class="table" id="listTable">
+          <tr>
+            <th>Name</th>
+            <th>Amount €</th>
+            <th>Date (dd.mm.yyyy)</th>
+            <th>Category</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr th:each="expense : ${expenses}">
+            <td th:text="${expense.name}"></td>
+            <td th:text="${expense.amount}"></td>
+            <td th:text="${expense.date}"></td>
+            <td th:text="${expense.category.name}"></td>
+            <td>
+              <a
+                sec:authorize="hasRole('ADMIN')"
+                class="btn btn-warning"
+                th:href="@{/edit/{id}(id=${expense.id})}"
+                >Edit</a
+              >
+            </td>
+            <td>
+              <a
+                sec:authorize="hasRole('ADMIN')"
+                class="btn btn-danger"
+                th:href="@{/delete/{id}(id=${expense.id})}"
+                >Delete</a
+              >
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="totalAmounts"></div>
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        var categorySums = {};
+        /*[# th:each="expense : ${expenses}"]*/
+        /*[# th:if="${expense ne null and expense.category ne null}"]*/
+        var categoryName = /*[[${expense.category.name}]]*/ "";
+        var amount = /*[[${expense.amount}]]*/ "";
+        var date = /*[[${expense.date}]]*/ "";
+        var month = date.slice(3, 5);
 
-    <div id="totalAmounts"></div>
-    <script th:inline="javascript">
-      /*<![CDATA[*/
-      var categorySums = {};
-      /*[# th:each="expense : ${expenses}"]*/
-      /*[# th:if="${expense ne null and expense.category ne null}"]*/
-      var categoryName = /*[[${expense.category.name}]]*/ "";
-      var amount = /*[[${expense.amount}]]*/ "";
-      var date = /*[[${expense.date}]]*/ "";
-      var month = date.slice(3, 5);
-
-      if (month === "01") {
-        month = "January";
-      } else if (month === "02") {
-        month = "February";
-      } else if (month === "03") {
-        month = "March";
-      } else if (month === "04") {
-        month = "April";
-      } else if (month === "05") {
-        month = "May";
-      } else if (month === "06") {
-        month = "June";
-      } else if (month === "07") {
-        month = "July";
-      } else if (month === "08") {
-        month = "August";
-      } else if (month === "09") {
-        month = "September";
-      } else if (month === "10") {
-        month = "October";
-      } else if (month === "11") {
-        month = "November";
-      } else {
-        month = "December";
-      }
-      if (categoryName !== null && amount !== null) {
-        if (categorySums[month] === undefined) {
-          categorySums[month] = {};
-          categorySums[month].total = 0;
+        if (month === "01") {
+          month = "January";
+        } else if (month === "02") {
+          month = "February";
+        } else if (month === "03") {
+          month = "March";
+        } else if (month === "04") {
+          month = "April";
+        } else if (month === "05") {
+          month = "May";
+        } else if (month === "06") {
+          month = "June";
+        } else if (month === "07") {
+          month = "July";
+        } else if (month === "08") {
+          month = "August";
+        } else if (month === "09") {
+          month = "September";
+        } else if (month === "10") {
+          month = "October";
+        } else if (month === "11") {
+          month = "November";
+        } else {
+          month = "December";
         }
+        if (categoryName !== null && amount !== null) {
+          if (categorySums[month] === undefined) {
+            categorySums[month] = {};
+            categorySums[month].total = 0;
+          }
 
-        if (categorySums[month][categoryName] === undefined) {
-          categorySums[month][categoryName] = 0;
+          if (categorySums[month][categoryName] === undefined) {
+            categorySums[month][categoryName] = 0;
+          }
+
+          categorySums[month][categoryName] += parseFloat(amount);
+          categorySums[month].total += parseFloat(amount);
         }
+        /*[/]*/
+        /*[/]*/
 
-        categorySums[month][categoryName] += parseFloat(amount);
-        categorySums[month].total += parseFloat(amount);
-      }
-      /*[/]*/
-      /*[/]*/
+        var totalAmountsDiv = document.getElementById("totalAmounts");
+        for (var month in categorySums) {
+          if (categorySums.hasOwnProperty(month)) {
+            var monthDiv = document.createElement("div");
+            monthDiv.style.marginTop = "35px";
+            monthDiv.style.textAlign = "left";
+            monthDiv.innerHTML =
+              "<h2>" +
+              month +
+              "'s total: " +
+              categorySums[month].total.toFixed(2) +
+              "€ </h2>";
+            totalAmountsDiv.appendChild(monthDiv);
 
-      var totalAmountsDiv = document.getElementById("totalAmounts");
-      for (var month in categorySums) {
-        if (categorySums.hasOwnProperty(month)) {
-          var monthDiv = document.createElement("div");
-          monthDiv.innerHTML =
-            "<h2>" +
-            month +
-            "'s total: " +
-            categorySums[month].total.toFixed(2) +
-            "€ </h2>";
-          totalAmountsDiv.appendChild(monthDiv);
-
-          for (var categoryName in categorySums[month]) {
-            if (
-              categorySums[month].hasOwnProperty(categoryName) &&
-              categoryName !== "total"
-            ) {
-              var totalAmountDiv = document.createElement("div");
-              totalAmountDiv.innerHTML =
-                "<h5>" +
-                categoryName +
-                " expenses: " +
-                categorySums[month][categoryName].toFixed(2) +
-                "€ </h5>";
-              totalAmountsDiv.appendChild(totalAmountDiv);
+            for (var categoryName in categorySums[month]) {
+              if (
+                categorySums[month].hasOwnProperty(categoryName) &&
+                categoryName !== "total"
+              ) {
+                var totalAmountDiv = document.createElement("div");
+                totalAmountDiv.style.marginTop = "15px";
+                totalAmountDiv.style.textAlign = "left";
+                totalAmountDiv.innerHTML =
+                  "<h5>" +
+                  categoryName +
+                  " expenses: " +
+                  categorySums[month][categoryName].toFixed(2) +
+                  "€ </h5>";
+                totalAmountsDiv.appendChild(totalAmountDiv);
+              }
             }
           }
         }
-      }
-      /*]]>*/
-    </script>
+        /*]]>*/
+      </script>
+    </div>
   </body>
 </html>
